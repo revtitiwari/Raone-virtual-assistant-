@@ -1,5 +1,5 @@
 import pyttsx3
-import speech_recognition as sr
+import Speech_Recognition as sr
 import datetime
 import wikipedia
 import webbrowser as wb
@@ -28,7 +28,7 @@ def speak(audio):
 
 
 def wishMe():
-    speak("Welcome back maam")
+    speak("Welcome back")
     hour = int(datetime.datetime.now().hour)
     year = int(datetime.datetime.now().year)
     month = int(datetime.datetime.now().month)
@@ -110,45 +110,31 @@ if __name__ == "__main__":
             speak("what should i search?")
             chrome_path = '"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"'
 
-            r = sr.Recognizer()
-
-            with sr.Microphone() as source:
-                print('say something!')
-                audio = r.listen(source)
-                print("done")
-            try:
-                text = r.recognize_google(audio)
-                print('google think you said:\n' +text +'.com')
-                wb.get(chrome_path).open(text+'.com')
-            except Exception as e:
-                print(e)
-            speak("Anything else maa'm")     
-        
-        elif 'how is the weather' and 'weather' in query:
-
-            url = 'https://www.accuweather.com/en/in/betul/189100/weather-forecast/189100'
-
-            res = requests.get(url)
-
-            data = res.json()
-
-            weather = data['weather'] [0] ['main'] 
-            temp = data['main']['temp']
-            wind_speed = data['wind']['speed']
-
-            latitude = data['coord']['lat']
-            longitude = data['coord']['lon']
-
-            description = data['weather'][0]['description']
-            speak('Temperature : {} degree celcius'.format(temp))
-            print('Wind Speed : {} m/s'.format(wind_speed))
-            print('Latitude : {}'.format(latitude))
-            print('Longitude : {}'.format(longitude))
-            print('Description : {}'.format(description))
-            print('weather is: {} '.format(weather))
-            speak('weather is : {} '.format(weather))
-            speak("Anything else maa'm")     
-
+        elif "weather" in query:
+             
+            # Google Open weather website
+            # to get API of Open weather
+            api_key = "Api key"
+            base_url = "http://api.openweathermap.org / data / 2.5 / weather?"
+            speak(" City name ")
+            print("City name : ")
+            city_name = takeCommand()
+            complete_url = base_url + "appid =" + api_key + "&q =" + city_name
+            response = requests.get(complete_url)
+            x = response.json()
+             
+            if x["cod"] != "404":
+                y = x["main"]
+                current_temperature = y["temp"]
+                current_pressure = y["pressure"]
+                current_humidiy = y["humidity"]
+                z = x["weather"]
+                weather_description = z[0]["description"]
+                print(" Temperature (in kelvin unit) = " +str(current_temperature)+"\n atmospheric pressure (in hPa unit) ="+str(current_pressure) +"\n humidity (in percentage) = " +str(current_humidiy) +"\n description = " +str(weather_description))
+             
+            else:
+                speak(" City Not Found ")
+            
 
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%I:%M:%S")    
@@ -190,114 +176,108 @@ if __name__ == "__main__":
                 speak("Email has been sent!")
             except Exception as e:
                 print(e)
-                speak("Sorry maa'm . I am not able to send this email")   
+                speak("Sorry maa'm . I am not able to send this email") 
 
-    def open_application(input): 
-  
-        if "chrome" in input: 
-            speak("Google Chrome") 
-            os.startfile('C:\Program Files (x86)\Google\Chrome\Application\chrome.exe') 
-            return
-  
-        elif "browser" in input: 
-            speak("Opening browser") 
-            os.startfile('"C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Microsoft Edge.lnk"') 
-            return
-  
-        elif "word" in input: 
-            speak("Opening Microsoft Word") 
-            os.startfile('"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk"') 
-            return
-  
-        elif "excel" in input: 
-            speak("Opening Microsoft Excel") 
-            os.startfile('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Excel 2016.lnk') 
-            return 
+        def about_you(query):
+            if 'who are you' in query or 'what can you do' in query or 'about you' in query:
+                speak('I am Ra-One version 1 point O an assistant I am made to help everyone and I love my job')
 
-        elif 'open code' in input:
-            codePath = "C:\\Users\\user account\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"#ADD THE PATH OF THE PROGEM HERE
-            os.startfile(codePath)
-            return
+            elif "who made you" in query or "who created you" in query or "who discovered you" in query:
+                speak("I was built by Revti tiwari on 3rd september 2020")
+                print("I was built by Revti tiwari on 3rd september 2020")
+
+            elif "How's you look like" in query:
+                speak("Well! you can imagine me.I'm a handsome guy")
+
+            else:
+                speak("sorry! can't get your request" )
+
+
+        def open_application(query): 
+  
+            if "chrome" in query: 
+                speak("Google Chrome") 
+                os.startfile('C:\Program Files (x86)\Google\Chrome\Application\chrome.exe') 
+                return
+  
+            elif "browser" in query: 
+                speak("Opening browser") 
+                os.startfile('"C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Microsoft Edge.lnk"') 
+                return
+  
+            elif "word" in query: 
+                speak("Opening Microsoft Word") 
+                os.startfile('"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Word 2016.lnk"') 
+                return
+  
+            elif "excel" in query: 
+                speak("Opening Microsoft Excel") 
+                os.startfile('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Excel 2016.lnk') 
+                return 
+
+            elif 'open code' in query:
+                codePath = "C:\\Users\\user account\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"#ADD THE PATH OF THE PROGEM HERE
+                os.startfile(codePath)
+                return
+
+            elif 'open' in query:
+                os.system('explorer C://{}'.format(query.replace('Open','')))
+                speak("Anything else maa'm")
+
+            else: 
+                speak("Application not available") 
+                return
         
-        elif 'open youtube' in input:
-            webbrowser.open_new_tab("https://www.youtube.com")
-            speak("youtube is open now")
-            speak("Anything else maa'm") 
 
-        elif 'open' in input:
-            os.system('explorer C://{}'.format(query.replace('Open','')))
-            speak("Anything else maa'm")
-
-        else: 
-            speak("Application not available") 
-            return
-        
-
-    def search_web(query): 
+        def search_web(query): 
   
-        driver = webdriver.chrome() 
-        driver.implicitly_wait(1) 
-        driver.maximize_window() 
+            driver = webdriver.chrome() 
+            driver.implicitly_wait(1) 
+            driver.maximize_window() 
   
-        if 'youtube' in query: 
+            if 'youtube' in query: 
   
-            speak("Opening in youtube") 
-            indx = query.split().index('youtube') 
-            query = input.split()[indx + 1:] 
-            driver.get("http://www.youtube.com/results?search_query =" + '+'.join(query)) 
-            return
-
-        else: 
-  
-            if 'google' in query or 'search'in query: 
-  
-                indx = query.split().index('google') 
+                speak("Opening in youtube") 
+                indx = query.split().index('youtube') 
                 query = input.split()[indx + 1:] 
-                driver.get("https://www.google.com/search?q =" + '+'.join(query)) 
-  
+                driver.get("http://www.youtube.com/results?search_query =" + '+'.join(query)) 
+                return
+
             else: 
   
-                driver.get("https://www.google.com/search?q =" + '+'.join(input.split())) 
+                if 'google' in query or 'search'in query: 
   
-            return
+                    indx = query.split().index('google') 
+                    query = input.split()[indx + 1:] 
+                    driver.get("https://www.google.com/search?q =" + '+'.join(query)) 
   
-
-    def about_you(query):
-        if 'who are you' in query or 'what can you do' in query or 'about you' in query:
-            speak('I am Ra-One version 1 point O an assistant I am made to help everyone and I love my job')
-
-        elif "who made you" in query or "who created you" in query or "who discovered you" in query:
-            speak("I was built by Revti tiwari on 3rd september 2020")
-            print("I was built by Revti tiwari on 3rd september 2020")
-
-        elif "How's you look like" in query:
-            speak("Well! you can imagine me.I'm a handsome guy")
-
-        else:
-            speak("sorry! can't get your request" )
-
-    def light_work():   
+                else: 
+  
+                    driver.get("https://www.google.com/search?q =" + '+'.join(input.split())) 
+  
+                return
+  
+        def light_work():   
         
-        if 'turn on lights' in query:
-            speak("OK maa'm turning on the Lights")
-            lighton()
-            speak("Lights are on")   
+            if 'turn on lights' in query:
+                speak("OK maa'm turning on the Lights")
+                lighton()
+                speak("Lights are on")   
         
-        elif 'turn off lights' in query:
-            speak("OK maa'm turning off the Lights")
-            lightoff()
-            speak("Lights are off")
-            time.sleep(3)
-            speak("Anything else maa'm")     
+            elif 'turn off lights' in query:
+                speak("OK maa'm turning off the Lights")
+                lightoff()
+                speak("Lights are off")
+                time.sleep(3)
+                speak("Anything else maa'm")     
 
-        elif "bye" in query or "stop" in query or "go offline" in query or "you can rest" in query:
-            speak("Good bye maa'm,enjoy your day see you soon!")
-            quit()
+            elif "bye" in query or "stop" in query or "go offline" in query or "you can rest" in query:
+                speak("Good bye maa'm,enjoy your day see you soon!")
+                quit()
 
-        elif "log off" in query or "sign out" in query or 'shutdown' in query:
-            speak("Ok , your pc will log off in 10 sec make sure you exit from all applications")
-            subprocess.call(["shutdown", "/l"])
-			
+            elif "log off" in query or "sign out" in query or 'shutdown' in query:
+                speak("Ok , your pc will log off in 10 sec make sure you exit from all applications")
+                subprocess.call(["shutdown", "/l"])
     
 
  
